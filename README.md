@@ -8,11 +8,11 @@ Bouton B:
 - GPIO 16
 
 Afficheur:
-- CLK : GPIO 18
-- DIO : GPIO 19
+- CLK : GPIO 19
+- DIO : GPIO 23
 
 Matrice:
-- DIN : GPIO 13
+- DIN : GPIO 5
 
 Servomoteur:
 - Signal : GPIO 25

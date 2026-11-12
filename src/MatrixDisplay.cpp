@@ -11,12 +11,63 @@ void SetupMatrixDisplay() {
   matrix.begin();
   matrix.setTextWrap(false);
   matrix.setBrightness(BRIGHTNESS);
-  matrix.fillScreen(0);
+  matrix.fillScreen(matrix.Color(0, 255, 0));
   matrix.show();
 }
 
-void ChangeColor(int value) {
-  //https://github.com/adafruit/Adafruit_NeoMatrix/blob/master/Adafruit_NeoMatrix.h
-  matrix.fillScreen(matrix.Color(255, 100, 0));
+void ChangeColor(bool valid) {
+  if (valid) {
+    //https://github.com/adafruit/Adafruit_NeoMatrix/blob/master/Adafruit_NeoMatrix.h
+    matrix.fillScreen(matrix.Color(0, 255, 0));
+  }
+  else {
+    //https://github.com/adafruit/Adafruit_NeoMatrix/blob/master/Adafruit_NeoMatrix.h
+    matrix.fillScreen(matrix.Color(255, 0, 0));
+  }
   matrix.show();
+}
+
+void FlashColor(bool valid) {
+  if (valid) {
+    //https://github.com/adafruit/Adafruit_NeoMatrix/blob/master/Adafruit_NeoMatrix.h
+    matrix.fillScreen(matrix.Color(0, 0, 0)); //ClearMatrix
+    matrix.show();
+    delay(500);
+    matrix.fillScreen(matrix.Color(0, 255, 0)); //ShowGreen
+    matrix.show();
+    delay(500);
+    matrix.fillScreen(matrix.Color(0, 0, 0));
+    matrix.show();
+    delay(500);
+    matrix.fillScreen(matrix.Color(0, 255, 0));
+    matrix.show();
+    delay(500);
+    matrix.fillScreen(matrix.Color(0, 0, 0));
+    matrix.show();
+    delay(500);
+    matrix.fillScreen(matrix.Color(0, 255, 0));
+    matrix.show();
+    delay(500);
+  }
+  else {
+    //https://github.com/adafruit/Adafruit_NeoMatrix/blob/master/Adafruit_NeoMatrix.h
+    matrix.fillScreen(matrix.Color(0, 0, 0));
+    matrix.show();
+    delay(500);
+    matrix.fillScreen(matrix.Color(255, 0, 0));//ShowRed
+    matrix.show();
+    delay(500);
+    matrix.fillScreen(matrix.Color(0, 0, 0));
+    matrix.show();
+    delay(500);
+    matrix.fillScreen(matrix.Color(255, 0, 0));
+    matrix.show();
+    delay(500);
+    matrix.fillScreen(matrix.Color(0, 0, 0));
+    matrix.show();
+    delay(500);
+    matrix.fillScreen(matrix.Color(255, 0, 0));
+    matrix.show();
+    delay(500);
+  }
 }
