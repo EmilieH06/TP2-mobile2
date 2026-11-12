@@ -54,19 +54,19 @@ void FlashColor(bool valid) {
     matrix.fillScreen(matrix.Color(0, 0, 0));
     matrix.show();
     delay(500);
-    matrix.fillScreen(matrix.Color(255, 0, 0));//ShowRed
+    matrix.fillScreen(matrix.Color(255, 150, 0));//ShowOrange
     matrix.show();
     delay(500);
     matrix.fillScreen(matrix.Color(0, 0, 0));
     matrix.show();
     delay(500);
-    matrix.fillScreen(matrix.Color(255, 0, 0));
+    matrix.fillScreen(matrix.Color(255, 150, 0));
     matrix.show();
     delay(500);
     matrix.fillScreen(matrix.Color(0, 0, 0));
     matrix.show();
     delay(500);
-    matrix.fillScreen(matrix.Color(255, 0, 0));
+    matrix.fillScreen(matrix.Color(255, 150, 0));
     matrix.show();
     delay(500);
   }
