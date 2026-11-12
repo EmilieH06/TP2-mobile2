@@ -16,23 +16,7 @@ void SetupMatrixDisplay() {
 }
 
 void ChangeColor(int value) {
-  if (value > WARM_TEMPERATURE) {
-    //Si la valeur (température) est plus grande que WARM_TEMPERATURE, affiche un écran orange
-
-    //https://github.com/adafruit/Adafruit_NeoMatrix/blob/master/Adafruit_NeoMatrix.h
-    matrix.fillScreen(matrix.Color(255, 100, 0));
-  }
-  else if (value < COLD_TEMPERATURE) {
-    //Si la valeur (température) est plus petite que COLD_TEMPERATURE, affiche un écran bleu
-
-    //https://github.com/adafruit/Adafruit_NeoMatrix/blob/master/Adafruit_NeoMatrix.h
-    matrix.fillScreen(matrix.Color(0, 0, 255));
-  }
-  else {
-    //Si la valeur (température) est entre COLD_TEMPERATURE et WARM_TEMPERATURE, affiche un écran vert
-
-    //https://github.com/adafruit/Adafruit_NeoMatrix/blob/master/Adafruit_NeoMatrix.h
-    matrix.fillScreen(matrix.Color(0, 255, 0));
-  }
+  //https://github.com/adafruit/Adafruit_NeoMatrix/blob/master/Adafruit_NeoMatrix.h
+  matrix.fillScreen(matrix.Color(255, 100, 0));
   matrix.show();
 }

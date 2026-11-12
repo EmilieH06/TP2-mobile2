@@ -1,20 +1,15 @@
 #include <Arduino.h>
 
-const char* SSID = "";//
-const char* MDP = "";//
-const char* BROKER = "broker.hivemq.com";
-const int PORT = 1883;
-const char* TOPIC = "cours/esp32/2435295/mouvement";
+#define CLK_PIN 18
+#define DIO_PIN 19
 
-#define LED_PIN 25
-#define MVT_DETECTOR 5
-#define CLK_PIN 19
-#define DIO_PIN 23
-#define BTN_PIN 17
+#define BTN_A_PIN 27
+#define BTN_B_PIN 16
+
+#define MATRIX_PIN 5
+#define BRIGHTNESS 13
+
+#define SERVO_PIN 25
 
 #define DELAY 2000
-#define LED_DELAY 5000
-#define COUNTER_DELAY 2000
 
-#define DEL_MAX_INTENSITY 255
-#define DEL_MIN_INTENSITY 0
