@@ -44,17 +44,16 @@ void CheckPressed(bool valid) {
     isValid = false;
     isVaultOpen = false;
     FlashColor(isValid);
-    ChangeColor(isValid);
 
-    add("FERMETURE");//
+    //add("FERMETURE");//
   }
 }
 
 void setup() {
   Serial.begin(9600);
 
-  connectWifi();//
-  connectDatabase();//
+  //connectWifi();//
+  //connectDatabase();//
 
   pinMode(BTN_A_PIN, INPUT_PULLUP);
   pinMode(BTN_B_PIN, INPUT_PULLUP);
@@ -117,4 +116,6 @@ void loop() {
   else {
     servo.write(90);
   }
+
+  UpdateFlashColor();
 }

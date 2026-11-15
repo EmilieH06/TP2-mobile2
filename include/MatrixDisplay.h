@@ -8,3 +8,4 @@ void SetupMatrixDisplay();
 
 void ChangeColor(bool valid);
 void FlashColor(bool valid);
+void UpdateFlashColor();
