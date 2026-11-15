@@ -1,10 +1,14 @@
-Lien vers la vidéo: 
+## Lien Github:
+- https://github.com/EmilieH06/TP2-mobile2
+
+## Lien vers la vidéo: 
+-
 
 ## Branchements:
-Bouton A:
+Bouton A (Bleu):
 - GPIO 27
 
-Bouton B:
+Bouton B (Vert):
 - GPIO 16
 
 Afficheur:
@@ -16,3 +20,12 @@ Matrice:
 
 Servomoteur:
 - Signal : GPIO 25
+
+## Librairies:
+- smougenot/TM1637@0.0.0-alpha+sha.9486982048 : pour le display
+- adafruit/Adafruit NeoMatrix : pour la matrice
+- madhephaestus/ESP32Servo@^3.0.5 : pour le servo moteur
+- sstaub/NTP : pour la date et l'heure
+
+## Explications du projet:
+
