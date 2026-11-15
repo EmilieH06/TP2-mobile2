@@ -8,14 +8,24 @@
 #include <ESP32Servo.h>
 #include <WiFi.h>
 
+enum State {
+  NON_PROGRAMME,
+  PROG_SAISIE,
+  PROG_CONFIRMATION,
+  OUVERT,
+  FERME
+};
+
 Servo servo;
 
 bool isValid = true;
-bool isVaultOpen = true;
-bool buttonPressed = false;
+bool buttonAPressed = false;
+bool buttonBPressed = false;
+
 unsigned long now = 0;
 unsigned long actionMillis = 0;
-unsigned long beginActionMillis = 0;
+
+State currentState = NON_PROGRAMME;
 
 void connectWifi() {
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
@@ -25,27 +35,6 @@ void connectWifi() {
   }
   if (WiFi.status() == WL_CONNECTED) {
     Serial.write("Connected");
-  }
-}
-
-void CheckPressed(bool valid) {
-  Serial.write("check");
-  bool pressLength = (millis() - actionMillis) > 3000;
-  buttonPressed = false;
-
-  if (valid) {
-    Serial.write("check valid");
-    isValid = true;
-    isVaultOpen = true;
-    FlashColor(isValid);
-  } 
-  else if (pressLength && !valid) {
-    Serial.write("check invalid");
-    isValid = false;
-    isVaultOpen = false;
-    FlashColor(isValid);
-
-    //add("FERMETURE");//
   }
 }
 
@@ -67,55 +56,164 @@ void setup() {
 
 void loop() {
   now = millis();
-
-  if (digitalRead(BTN_A_PIN) == LOW) {
-    delay(50);
-
-    if (digitalRead(BTN_A_PIN) == LOW) {
-      Serial.write("valid");
-      actionMillis = millis();
-      buttonPressed = true;
-      
-      while (digitalRead(BTN_A_PIN) == LOW) {
-        delay(10);
-      }
-      delay(50);
-    }
-  }
-  if (digitalRead(BTN_A_PIN) == HIGH && buttonPressed) {
-    CheckPressed(true);
-  }
-  if (digitalRead(BTN_B_PIN) == LOW) {
-    delay(50);
-
-    if (digitalRead(BTN_B_PIN) == LOW) {
-      Serial.write("invalid");
-      actionMillis = millis();
-      buttonPressed = true;
-      
-      while (digitalRead(BTN_B_PIN) == LOW) {
-        delay(10);
-      }
-      delay(50);
-    }
-  }
-  if (digitalRead(BTN_B_PIN) == HIGH && buttonPressed) {
-    CheckPressed(false);
-  }
-
-  if (now - actionMillis < DELAY && isVaultOpen) {
-    //servo.write(180);
-    delay(50);
-    isVaultOpen = false;
-  }
-  else if (now - actionMillis < DELAY && !isVaultOpen) {
-    //servo.write(0);
-    delay(50);
-    isVaultOpen = true;
-  }
-  else {
-    servo.write(90);
-  }
-
   UpdateFlashColor();
+
+  switch (currentState) {
+    case NON_PROGRAMME:
+      Serial.write("NON_PROGRAMME ");
+      //servo.write(0);
+
+      if (digitalRead(BTN_B_PIN) == LOW && !buttonBPressed) {
+        delay(50);
+
+        if (digitalRead(BTN_B_PIN) == LOW) {
+          Serial.write("NON_PROGRAMME B");
+          actionMillis = millis();
+          buttonBPressed = true;
+        }
+      }
+      if (digitalRead(BTN_B_PIN) == LOW && buttonBPressed && (millis() - actionMillis) > 3000) {
+        buttonBPressed = false;
+        currentState = PROG_SAISIE;
+      }
+      if (digitalRead(BTN_B_PIN) == HIGH) {
+        buttonBPressed = false;
+      }
+      break;
+
+    case PROG_SAISIE:
+      Serial.write("PROG_SAISIE ");
+      FlashColor(false);
+      //servo.write(0);
+      // Matrice: orange clignotante
+      // Afficheur : saisie
+
+      // quand 4 chiffres confirmés
+      currentState = PROG_CONFIRMATION;
+
+      break;
+
+    case PROG_CONFIRMATION:
+      Serial.write("PROG_CONFIRMATION ");
+      FlashColor(false);
+      //servo.write(0);
+      // Matrice: orange clignotante
+      // Afficheur : code
+
+      //si codes différents 
+      // 3 clignotements rouges
+      //currentState = PROG_SAISIE;
+      //sinon codes identiques
+      // 3 clignotements verts
+      //currentState = OUVERT;
+
+      //temp pour tester
+      if (digitalRead(BTN_A_PIN) == LOW) {
+        delay(50);
+
+        if (digitalRead(BTN_A_PIN) == LOW) {
+          Serial.write("FERME A");
+          actionMillis = millis();
+          buttonAPressed = true;
+          
+          while (digitalRead(BTN_A_PIN) == LOW) {
+            delay(10);
+          }
+          delay(50);
+        }
+      }
+      if (digitalRead(BTN_A_PIN) == HIGH && buttonAPressed) {
+        isValid = true;
+        buttonAPressed = false;
+        FlashColor(isValid);
+        currentState = OUVERT;
+      }
+      //
+      break;
+
+    case OUVERT:
+      Serial.write("OUVERT ");
+      ChangeColor(true);
+      //servo.write(0);
+      // Matrice: vert fixe
+      // Afficheur: vide
+
+      if (digitalRead(BTN_A_PIN) == LOW) {
+        delay(50);
+
+        if (digitalRead(BTN_A_PIN) == LOW) {
+          Serial.write("OUVERT A");
+          actionMillis = millis();
+          buttonAPressed = true;
+          
+          while (digitalRead(BTN_A_PIN) == LOW) {
+            delay(10);
+          }
+          delay(50);
+        }
+      }
+      
+      if (digitalRead(BTN_A_PIN) == HIGH && buttonAPressed) {
+        buttonAPressed = false;
+        //add("FERMETURE");// //journalstate
+        currentState = FERME;
+      }
+
+      if (digitalRead(BTN_B_PIN) == LOW && !buttonBPressed) {
+        delay(50);
+
+        if (digitalRead(BTN_B_PIN) == LOW) {
+          Serial.write("OUVERT B");
+          actionMillis = millis();
+          buttonBPressed = true;
+        }
+      }
+      if (digitalRead(BTN_B_PIN) == LOW && buttonBPressed && (millis() - actionMillis) > 3000) {
+        isValid = false;
+        buttonBPressed = false;
+        currentState = PROG_SAISIE;
+      }
+      
+      if (digitalRead(BTN_B_PIN) == HIGH) {
+        buttonBPressed = false;
+      }
+      break;
+
+    case FERME:
+      Serial.write("FERME ");
+      ChangeColor(false);
+      //servo.write(180);
+      // Matrice: rouge fixe
+      // Afficheur : code
+
+      //si bon code
+      //currentState = OUVERT;
+      //sinon 
+      // Clignotement rouge
+      //currentState = FERME;
+
+      //temp pour tester
+      if (digitalRead(BTN_A_PIN) == LOW) {
+        delay(50);
+
+        if (digitalRead(BTN_A_PIN) == LOW) {
+          Serial.write("FERME A");
+          actionMillis = millis();
+          buttonAPressed = true;
+          
+          while (digitalRead(BTN_A_PIN) == LOW) {
+            delay(10);
+          }
+          delay(50);
+        }
+      }
+      if (digitalRead(BTN_A_PIN) == HIGH && buttonAPressed) {
+        isValid = true;
+        buttonAPressed = false;
+        FlashColor(isValid);
+        currentState = OUVERT;
+      }
+      //
+      break;
+  }
 }

@@ -19,7 +19,7 @@ FirebaseData fbdo;
 WiFiUDP wifiUdp;
 NTP ntp(wifiUdp);
 
-String path = "vault/journals";
+String path = "chambre/evenements";
 String vault = "chambre-2435295";
 
 void connectDatabase() {

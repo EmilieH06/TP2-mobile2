@@ -97,13 +97,6 @@ void UpdateFlashColor() {
             //https://github.com/adafruit/Adafruit_NeoMatrix/blob/master/Adafruit_NeoMatrix.h
             matrix.fillScreen(matrix.Color(255, 150, 0));
           }
-          break;
-
-        case 6:
-          if (!isValidFlash) {
-            //https://github.com/adafruit/Adafruit_NeoMatrix/blob/master/Adafruit_NeoMatrix.h
-            matrix.fillScreen(matrix.Color(255, 0, 0));
-          }
           isFlashing = false;
           break;
       }
