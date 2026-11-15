@@ -2,6 +2,7 @@
 #include "Configuration.h"
 #include "Secret.h"
 #include "Display.h"
+#include "Store.h"
 #include "MatrixDisplay.h"
 #include <TM1637Display.h>
 #include <ESP32Servo.h>
@@ -27,7 +28,6 @@ void connectWifi() {
   }
 }
 
-
 void CheckPressed(bool valid) {
   Serial.write("check");
   bool pressLength = (millis() - actionMillis) > 3000;
@@ -45,12 +45,16 @@ void CheckPressed(bool valid) {
     isVaultOpen = false;
     FlashColor(isValid);
     ChangeColor(isValid);
+
+    add("FERMETURE");//
   }
 }
 
 void setup() {
   Serial.begin(9600);
-  //connectWifi();
+
+  connectWifi();//
+  connectDatabase();//
 
   pinMode(BTN_A_PIN, INPUT_PULLUP);
   pinMode(BTN_B_PIN, INPUT_PULLUP);
