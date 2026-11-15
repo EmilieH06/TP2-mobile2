@@ -1,8 +1,5 @@
 #include <Arduino.h>
 
-#define WIFI_SSID "Netgear5gden"
-#define WIFI_PASSWORD ""
-
 #define CLK_PIN 19
 #define DIO_PIN 23
 

@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include "Configuration.h"
+#include "Secret.h"
 #include "Display.h"
 #include "MatrixDisplay.h"
 #include <TM1637Display.h>
