@@ -1,4 +1,4 @@
 #include <Arduino.h>
 
-void SetupServo();
-void DoorVaultMove(State currentState, bool isVaultDoorMoving);
+void setupServo();
+void doorVaultMove(State currentState, bool isVaultDoorMoving);

@@ -4,16 +4,24 @@
 
 int combinationStep = 0;
 
-int combination[4] = {0, 0, 0, 0};
+int combination[4] = {-1, -1, -1, -1};
 
-bool buttonACodePressed = false;
-bool buttonBCodePressed = false;
+bool buttonACodePressed = true;
+bool buttonBCodePressed = true;
 
 void updateCombinationDisplay() {
+  if (combination[combinationStep] == -1) {
+    combination[combinationStep] = 0;
+  }
+
   uint8_t data[4];
 
-  for (int i = 0; i <= combinationStep && i < 4; i++) {
-    data[i] = display.encodeDigit(combination[i]);
+  for (int i = 0; i < 4; i++) {
+    if (combination[i] != -1) {
+      data[i] = display.encodeDigit(combination[i]);
+    } else {
+      data[i] = 0x00;
+    }
   }
 
   display.setSegments(data);
@@ -24,24 +32,26 @@ void incrementNumber() {
     combination[combinationStep] += 1;
 
     if (combination[combinationStep] > 9) {
+      Serial.write("Incrementing ");
       combination[combinationStep] = 0;
     }
-
-    updateCombinationDisplay();
   }
 }
 
+void clearCombinationTyper() {
+  display.clear();
+}
+
 void resetCombinationTyper() {
+  clearCombinationTyper();
   combinationStep = 0;
 
   for (int i = 0; i < 4; i++) {
-    combination[i] = 0;
+    combination[i] = -1;
   }
 
-  buttonACodePressed = false;
-  buttonBCodePressed = false;
-
-  updateCombinationDisplay();
+  buttonACodePressed = true;
+  buttonBCodePressed = true;
 }
 
 bool combinationTyper() {
@@ -58,7 +68,6 @@ bool combinationTyper() {
       delay(50);
     }
   }
-
   if (digitalRead(BTN_A_PIN) == HIGH) {
     buttonACodePressed = false;
   }
@@ -77,14 +86,12 @@ bool combinationTyper() {
         delay(10);
       }
       delay(50);
-
-      updateCombinationDisplay();
     }
   }
-
   if (digitalRead(BTN_B_PIN) == HIGH) {
     buttonBCodePressed = false;
   }
 
+  updateCombinationDisplay();
   return false;
 }

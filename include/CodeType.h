@@ -5,4 +5,5 @@ extern int combination[4];
 void incrementNumber();
 bool combinationTyper();
 void resetCombinationTyper();
+void clearCombinationTyper();
 void updateCombinationDisplay();

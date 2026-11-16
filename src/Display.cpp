@@ -6,14 +6,14 @@
 
 TM1637Display display(CLK_PIN, DIO_PIN);
 
-void SetupDisplay() {
+void setupDisplay() {
   display.setBrightness(0x0f);
   // luminosité : 0x00 (faible) à 0x0f (maximum)
   display.clear();
 }
 
-void Show() {
-  ChangeColor(false);
+void show() {
+  changeColor(false);
 
   uint8_t data[] = {
     display.encodeDigit(1),
@@ -25,9 +25,9 @@ void Show() {
   display.setSegments(data);
 }
 
-void ShowDisplay() {
+void showDisplay() {
   if(Serial.read()) {
-    Show();
+    show();
   }
   else {
     Serial.write("Un problème est survenue");

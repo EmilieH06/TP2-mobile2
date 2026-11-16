@@ -14,7 +14,7 @@ int flashStep = 0;
 bool isFlashing = false;
 bool isValidFlash = false;
 
-void SetupMatrixDisplay() {
+void setupMatrixDisplay() {
   matrix.begin();
   matrix.setTextWrap(false);
   matrix.setBrightness(BRIGHTNESS);
@@ -22,7 +22,7 @@ void SetupMatrixDisplay() {
   matrix.show();
 }
 
-void ChangeColor(bool valid) {
+void changeColor(bool valid) {
   if (valid) {
     //https://github.com/adafruit/Adafruit_NeoMatrix/blob/master/Adafruit_NeoMatrix.h
     matrix.fillScreen(matrix.Color(0, 255, 0));
@@ -34,7 +34,7 @@ void ChangeColor(bool valid) {
   matrix.show();
 }
 
-void FlashColor(bool valid) {
+void flashColor(bool valid) {
   if (!isFlashing) {
     isFlashing = true;
     isValidFlash = valid;
@@ -43,7 +43,7 @@ void FlashColor(bool valid) {
   }
 }
 
-void UpdateFlashColor() {
+void updateFlashColor() {
   if (isFlashing) {
     unsigned long currentMillisColor = millis();
 

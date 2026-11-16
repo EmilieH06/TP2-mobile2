@@ -3,8 +3,8 @@
 
 extern Adafruit_NeoMatrix matrix;
 
-void SetupMatrixDisplay();
+void setupMatrixDisplay();
 
-void ChangeColor(bool valid);
-void FlashColor(bool valid);
-void UpdateFlashColor();
+void changeColor(bool valid);
+void flashColor(bool valid);
+void updateFlashColor();

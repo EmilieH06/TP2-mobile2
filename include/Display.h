@@ -3,7 +3,7 @@
 
 extern TM1637Display display;
 
-void SetupDisplay();
+void setupDisplay();
 
-void Show();
-void ShowDisplay();
+void show();
+void showDisplay();

@@ -40,23 +40,26 @@ void setup() {
   pinMode(BTN_A_PIN, INPUT_PULLUP);
   pinMode(BTN_B_PIN, INPUT_PULLUP);
   
-  SetupDisplay();
-  SetupMatrixDisplay();
-  SetupServo();
+  setupDisplay();
+  setupMatrixDisplay();
+  setupServo();
+}
+
+void updateServo() {
+  if ((now - doorMoveMillis) < SERVO_180_TIME) {
+    isVaultDoorMoving = true;
+    doorVaultMove(currentState, isVaultDoorMoving);
+  }
+  else {
+    isVaultDoorMoving = false;
+    doorVaultMove(currentState, isVaultDoorMoving);
+  }
 }
 
 void loop() {
   now = millis();
-  UpdateFlashColor();
-
-  if ((now - doorMoveMillis) < SERVO_180_TIME) {
-    isVaultDoorMoving = true;
-    DoorVaultMove(currentState, isVaultDoorMoving);
-  }
-  else {
-    isVaultDoorMoving = false;
-    DoorVaultMove(currentState, isVaultDoorMoving);
-  }
+  updateFlashColor();
+  //updateServo();
 
   switch (currentState) {
     case NON_PROGRAMME:
@@ -72,7 +75,6 @@ void loop() {
       if (digitalRead(BTN_B_PIN) == LOW && buttonBPressed && (millis() - actionMillis) > 3000) {
         buttonBPressed = false;
         currentState = PROG_SAISIE;
-        delay(DELAY);
       }
       if (digitalRead(BTN_B_PIN) == HIGH) {
         buttonBPressed = false;
@@ -80,10 +82,7 @@ void loop() {
       break;
 
     case PROG_SAISIE:
-      Serial.write("PROG_SAISIE ");
-      FlashColor(false);
-      // Matrice: orange clignotante
-      // Afficheur : saisie
+      flashColor(false); //orange
 
       if (combinationTyper()) {
         for (int i = 0; i < 4; i++) {
@@ -96,46 +95,29 @@ void loop() {
       break;
 
     case PROG_CONFIRMATION:
-      Serial.write("PROG_CONFIRMATION ");
-      FlashColor(false);
-      // Matrice: orange clignotante
+      flashColor(false); //orange
+
       // Afficheur : code
+      if (combinationTyper()) {
+        //function
+        //si codes différents 
+        // 3 clignotements rouges
+        //currentState = PROG_SAISIE;
+        //sinon codes identiques
+        // 3 clignotements verts
+        //currentState = OUVERT;
+        //
 
-      //si codes différents 
-      // 3 clignotements rouges
-      //currentState = PROG_SAISIE;
-      //sinon codes identiques
-      // 3 clignotements verts
-      //currentState = OUVERT;
-
-      //temp pour tester
-      if (digitalRead(BTN_A_PIN) == LOW) {
-        delay(50);
-
-        if (digitalRead(BTN_A_PIN) == LOW) {
-          Serial.write("FERME A");
-          actionMillis = millis();
-          buttonAPressed = true;
-          
-          while (digitalRead(BTN_A_PIN) == LOW) {
-            delay(10);
-          }
-          delay(50);
-        }
-      }
-      if (digitalRead(BTN_A_PIN) == HIGH && buttonAPressed) {
         isValid = true;
-        buttonAPressed = false;
-        FlashColor(isValid);
+        flashColor(isValid);
+        //add("CHANGEMENT_CODE");// //journalstate
         currentState = OUVERT;
+        resetCombinationTyper();
       }
-      //
       break;
 
     case OUVERT:
-      Serial.write("OUVERT ");
-      ChangeColor(true);
-      // Matrice: vert fixe
+      changeColor(true); //vert
       // Afficheur: vide
 
       if (digitalRead(BTN_A_PIN) == LOW) {
@@ -181,40 +163,27 @@ void loop() {
       break;
 
     case FERME:
-      Serial.write("FERME ");
-      ChangeColor(false);
-      // Matrice: rouge fixe
+      changeColor(false); //rouge
+      
       // Afficheur : code
+      if (combinationTyper()) {
+        //function
+        //si bon code
+        // vert
+        //currentState = OUVERT;
+        //sinon 
+        // clignotements rouges
+        //currentState = FERME;
+        //
 
-      //si bon code
-      //currentState = OUVERT;
-      //sinon 
-      // Clignotement rouge
-      //currentState = FERME;
-
-      //temp pour tester
-      if (digitalRead(BTN_A_PIN) == LOW) {
-        delay(50);
-
-        if (digitalRead(BTN_A_PIN) == LOW) {
-          Serial.write("FERME A");
-          actionMillis = millis();
-          buttonAPressed = true;
-          
-          while (digitalRead(BTN_A_PIN) == LOW) {
-            delay(10);
-          }
-          delay(50);
-        }
-      }
-      if (digitalRead(BTN_A_PIN) == HIGH && buttonAPressed) {
         isValid = true;
         buttonAPressed = false;
-        FlashColor(isValid);
+        flashColor(isValid);
         doorMoveMillis = millis();
+        //add("OUVERTURE");// //journalstate
         currentState = OUVERT;
+        resetCombinationTyper();
       }
-      //
       break;
   }
 }
