@@ -28,4 +28,8 @@ Servomoteur:
 - sstaub/NTP : pour la date et l'heure
 
 ## Explications du projet:
-
+Faire un coffre fort programmable.
+Lorsque le coffre est activé pour la première fois, on peut entrer notre code pour pouvoir l'utiliser plus tard pour ouvrir le coffre.
+Lorsque le coffre est ouvert, on peut changer son code ou fermer le coffre.
+Lorsque le coffre est fermé, on peut l'ouvrir en entrant le code qu'on a saisie au début ou lors de la reprogrammation.
+La saisie d'un code requiert ensuite sa confirmation.

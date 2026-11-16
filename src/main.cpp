@@ -67,7 +67,6 @@ void loop() {
         delay(50);
 
         if (digitalRead(BTN_B_PIN) == LOW) {
-          Serial.write("NON_PROGRAMME B");
           actionMillis = millis();
           buttonBPressed = true;
         }
