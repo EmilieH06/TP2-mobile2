@@ -13,3 +13,12 @@
 
 #define DELAY 2000
 
+#define SERVO_180_TIME 300
+
+enum State {
+  NON_PROGRAMME,
+  PROG_SAISIE,
+  PROG_CONFIRMATION,
+  OUVERT,
+  FERME
+};

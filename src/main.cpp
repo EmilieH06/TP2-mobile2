@@ -4,27 +4,18 @@
 #include "Display.h"
 #include "Store.h"
 #include "CodeType.h"
+#include "DoorVault.h"
 #include "MatrixDisplay.h"
-#include <TM1637Display.h>
-#include <ESP32Servo.h>
 #include <WiFi.h>
 
-enum State {
-  NON_PROGRAMME,
-  PROG_SAISIE,
-  PROG_CONFIRMATION,
-  OUVERT,
-  FERME
-};
-
-Servo servo;
-
 bool isValid = true;
+bool isVaultDoorMoving = true;
 bool buttonAPressed = false;
 bool buttonBPressed = false;
 
 unsigned long now = 0;
 unsigned long actionMillis = 0;
+unsigned long doorMoveMillis = 100000;
 
 State currentState = NON_PROGRAMME;
 int vaultCode[4];
@@ -51,19 +42,24 @@ void setup() {
   
   SetupDisplay();
   SetupMatrixDisplay();
-
-  servo.attach(SERVO_PIN);
-  servo.write(90);
+  SetupServo();
 }
 
 void loop() {
   now = millis();
   UpdateFlashColor();
 
+  if ((now - doorMoveMillis) < SERVO_180_TIME) {
+    isVaultDoorMoving = true;
+    DoorVaultMove(currentState, isVaultDoorMoving);
+  }
+  else {
+    isVaultDoorMoving = false;
+    DoorVaultMove(currentState, isVaultDoorMoving);
+  }
+
   switch (currentState) {
     case NON_PROGRAMME:
-      //servo.write(0);
-
       if (digitalRead(BTN_B_PIN) == LOW && !buttonBPressed) {
         delay(50);
 
@@ -86,7 +82,6 @@ void loop() {
     case PROG_SAISIE:
       Serial.write("PROG_SAISIE ");
       FlashColor(false);
-      //servo.write(0);
       // Matrice: orange clignotante
       // Afficheur : saisie
 
@@ -103,7 +98,6 @@ void loop() {
     case PROG_CONFIRMATION:
       Serial.write("PROG_CONFIRMATION ");
       FlashColor(false);
-      //servo.write(0);
       // Matrice: orange clignotante
       // Afficheur : code
 
@@ -141,7 +135,6 @@ void loop() {
     case OUVERT:
       Serial.write("OUVERT ");
       ChangeColor(true);
-      //servo.write(0);
       // Matrice: vert fixe
       // Afficheur: vide
 
@@ -163,6 +156,7 @@ void loop() {
       if (digitalRead(BTN_A_PIN) == HIGH && buttonAPressed) {
         buttonAPressed = false;
         //add("FERMETURE");// //journalstate
+        doorMoveMillis = millis();
         currentState = FERME;
       }
 
@@ -189,7 +183,6 @@ void loop() {
     case FERME:
       Serial.write("FERME ");
       ChangeColor(false);
-      //servo.write(180);
       // Matrice: rouge fixe
       // Afficheur : code
 
@@ -218,6 +211,7 @@ void loop() {
         isValid = true;
         buttonAPressed = false;
         FlashColor(isValid);
+        doorMoveMillis = millis();
         currentState = OUVERT;
       }
       //
