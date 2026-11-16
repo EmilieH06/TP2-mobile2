@@ -32,7 +32,6 @@ void incrementNumber() {
     combination[combinationStep] += 1;
 
     if (combination[combinationStep] > 9) {
-      Serial.write("Incrementing ");
       combination[combinationStep] = 0;
     }
   }

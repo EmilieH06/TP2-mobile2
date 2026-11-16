@@ -16,6 +16,7 @@ bool buttonBPressed = false;
 unsigned long now = 0;
 unsigned long actionMillis = 0;
 unsigned long doorMoveMillis = 100000;
+unsigned int wrongCodeCounter = 0;
 
 State currentState = NON_PROGRAMME;
 int vaultCode[4];
@@ -96,34 +97,44 @@ void loop() {
     case PROG_CONFIRMATION:
       flashColor(false); //orange
 
-      // Afficheur : code
       if (combinationTyper()) {
-        //function
-        //si codes différents 
-        // 3 clignotements rouges
-        //currentState = PROG_SAISIE;
-        //sinon codes identiques
-        // 3 clignotements verts
-        //currentState = OUVERT;
-        //
+        bool isCorrectCode = true;
 
-        isValid = true;
-        flashColor(isValid);
-        //add("CHANGEMENT_CODE");// //journalstate
-        currentState = OUVERT;
+        for (int i = 0; i < 4; i++) {
+          if (vaultCode[i] != combination[i]) {
+            isCorrectCode = false;
+            // 3 clignotements rouges
+            flashColor(isCorrectCode); //rouge
+            break;
+          }
+        }
+        if (isCorrectCode) {
+          isValid = true;
+          wrongCodeCounter = 0;
+          // 3 clignotements verts
+          flashColor(isCorrectCode); //vert
+          //add("CHANGEMENT_CODE");// //journalstate
+          currentState = OUVERT;
+        }
+        else {
+          wrongCodeCounter += 1;
+          if (wrongCodeCounter >= 3) {
+            wrongCodeCounter = 0;
+            currentState = PROG_SAISIE;
+          }
+        }
+      
         resetCombinationTyper();
       }
       break;
 
     case OUVERT:
       changeColor(true); //vert
-      // Afficheur: vide
 
       if (digitalRead(BTN_A_PIN) == LOW) {
         delay(50);
 
         if (digitalRead(BTN_A_PIN) == LOW) {
-          Serial.write("OUVERT A");
           actionMillis = millis();
           buttonAPressed = true;
           
@@ -145,7 +156,6 @@ void loop() {
         delay(50);
 
         if (digitalRead(BTN_B_PIN) == LOW) {
-          Serial.write("OUVERT B");
           actionMillis = millis();
           buttonBPressed = true;
         }
