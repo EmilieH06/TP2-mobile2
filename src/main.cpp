@@ -3,6 +3,7 @@
 #include "Secret.h"
 #include "Display.h"
 #include "Store.h"
+#include "CodeType.h"
 #include "MatrixDisplay.h"
 #include <TM1637Display.h>
 #include <ESP32Servo.h>
@@ -26,6 +27,7 @@ unsigned long now = 0;
 unsigned long actionMillis = 0;
 
 State currentState = NON_PROGRAMME;
+int vaultCode[4];
 
 void connectWifi() {
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
@@ -60,7 +62,6 @@ void loop() {
 
   switch (currentState) {
     case NON_PROGRAMME:
-      Serial.write("NON_PROGRAMME ");
       //servo.write(0);
 
       if (digitalRead(BTN_B_PIN) == LOW && !buttonBPressed) {
@@ -75,6 +76,7 @@ void loop() {
       if (digitalRead(BTN_B_PIN) == LOW && buttonBPressed && (millis() - actionMillis) > 3000) {
         buttonBPressed = false;
         currentState = PROG_SAISIE;
+        delay(DELAY);
       }
       if (digitalRead(BTN_B_PIN) == HIGH) {
         buttonBPressed = false;
@@ -88,9 +90,14 @@ void loop() {
       // Matrice: orange clignotante
       // Afficheur : saisie
 
-      // quand 4 chiffres confirmés
-      currentState = PROG_CONFIRMATION;
+      if (combinationTyper()) {
+        for (int i = 0; i < 4; i++) {
+          vaultCode[i] = combination[i];
+        }
+        currentState = PROG_CONFIRMATION;
 
+        resetCombinationTyper();
+      }
       break;
 
     case PROG_CONFIRMATION:

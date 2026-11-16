@@ -4,10 +4,6 @@
 #include "MatrixDisplay.h"
 #include <TM1637Display.h>
 
-const uint8_t showC = { // C
-  SEG_A | SEG_F | SEG_E | SEG_D
-};
-
 TM1637Display display(CLK_PIN, DIO_PIN);
 
 void SetupDisplay() {
@@ -17,13 +13,13 @@ void SetupDisplay() {
 }
 
 void Show() {
-  ChangeColor(1);
+  ChangeColor(false);
 
   uint8_t data[] = {
     display.encodeDigit(1),
     display.encodeDigit(1),
     display.encodeDigit(1),
-    showC
+    display.encodeDigit(1)
   };
 
   display.setSegments(data);
