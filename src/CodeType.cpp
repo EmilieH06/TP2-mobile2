@@ -5,7 +5,6 @@
 TM1637Display display(CLK_PIN, DIO_PIN);
 
 int combinationStep = 0;
-
 int combination[4] = {-1, -1, -1, -1};
 
 bool buttonACodePressed = true;
@@ -13,7 +12,6 @@ bool buttonBCodePressed = true;
 
 void setupDisplay() {
   display.setBrightness(0x0f);
-  // luminosité : 0x00 (faible) à 0x0f (maximum)
   display.clear();
 }
 
@@ -81,7 +79,6 @@ bool combinationTyper() {
 
   if (digitalRead(BTN_B_PIN) == LOW && !buttonBCodePressed) {
     delay(50);
-
     if (digitalRead(BTN_B_PIN) == LOW) {
       buttonBCodePressed = true;
       combinationStep++;

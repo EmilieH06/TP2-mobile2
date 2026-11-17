@@ -10,10 +10,13 @@ void setupServo() {
 }
 
 void doorVaultMove(State currentState, bool isVaultDoorMoving) {
-  if (isVaultDoorMoving && currentState == FERME) {
-    servo.write(180);
-  } else if (isVaultDoorMoving && currentState != FERME) {
-    servo.write(0);
+  if (isVaultDoorMoving) {
+    if (currentState == FERME) {
+      servo.write(180);
+    }
+    else {
+      servo.write(0);
+    }
   }
   else {
     servo.write(90);

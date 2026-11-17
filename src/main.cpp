@@ -34,8 +34,8 @@ void connectWifi() {
 void setup() {
   Serial.begin(9600);
 
-  connectWifi();//
-  connectDatabase();//
+  connectWifi();
+  connectDatabase();
 
   pinMode(BTN_A_PIN, INPUT_PULLUP);
   pinMode(BTN_B_PIN, INPUT_PULLUP);
@@ -48,12 +48,20 @@ void setup() {
 void updateServo() {
   if ((now - doorMoveMillis) < SERVO_180_TIME) {
     isVaultDoorMoving = true;
-    doorVaultMove(currentState, isVaultDoorMoving);
   }
   else {
     isVaultDoorMoving = false;
-    doorVaultMove(currentState, isVaultDoorMoving);
   }
+  doorVaultMove(currentState, isVaultDoorMoving);
+}
+
+bool compareCodes() {
+  for (int i = 0; i < 4; i++) {
+    if (vaultCode[i] != combination[i]) {
+      return false;
+    }
+  }
+  return true;
 }
 
 void updateCurrentState() {
@@ -61,7 +69,6 @@ void updateCurrentState() {
     case NON_PROGRAMME:
       if (digitalRead(BTN_B_PIN) == LOW && !buttonBPressed) {
         delay(50);
-
         if (digitalRead(BTN_B_PIN) == LOW) {
           actionMillis = millis();
           buttonBPressed = true;
@@ -77,40 +84,29 @@ void updateCurrentState() {
       break;
 
     case PROG_SAISIE:
-      flashColor(ORANGE);
+      continuousFlash(ORANGE);
 
       if (combinationTyper()) {
         for (int i = 0; i < 4; i++) {
           vaultCode[i] = combination[i];
         }
         currentState = PROG_CONFIRMATION;
-
         resetCombinationTyper();
       }
       break;
 
     case PROG_CONFIRMATION:
-      flashColor(ORANGE);
+      continuousFlash(ORANGE);
 
       if (combinationTyper()) {
-        bool isCorrectCode = true;
-
-        for (int i = 0; i < 4; i++) {
-          if (vaultCode[i] != combination[i]) {
-            isCorrectCode = false;
-            break;
-          }
-        }
-        if (isCorrectCode) {
+       if (compareCodes()) {
           isValid = true;
           wrongCodeCounter = 0;
-          // 3 clignotements verts
           flashColor(VERT);
-          add(CHANGEMENT_CODE);//
+          add(CHANGEMENT_CODE);
           currentState = OUVERT;
         }
         else {
-          // 3 clignotements rouges
           flashColor(ROUGE);
           wrongCodeCounter += 1;
           if (wrongCodeCounter >= 3) {
@@ -118,17 +114,17 @@ void updateCurrentState() {
             currentState = PROG_SAISIE;
           }
         }
-      
         resetCombinationTyper();
       }
       break;
 
     case OUVERT:
-      changeColor(VERT);
+      if (!isFlashing) {
+        changeColor(VERT);
+      }
 
       if (digitalRead(BTN_A_PIN) == LOW) {
         delay(50);
-
         if (digitalRead(BTN_A_PIN) == LOW) {
           actionMillis = millis();
           buttonAPressed = true;
@@ -139,17 +135,15 @@ void updateCurrentState() {
           delay(50);
         }
       }
-      
       if (digitalRead(BTN_A_PIN) == HIGH && buttonAPressed) {
         buttonAPressed = false;
-        add(FERMETURE);//
+        add(FERMETURE);
         doorMoveMillis = millis();
         currentState = FERME;
       }
 
       if (digitalRead(BTN_B_PIN) == LOW && !buttonBPressed) {
         delay(50);
-
         if (digitalRead(BTN_B_PIN) == LOW) {
           actionMillis = millis();
           buttonBPressed = true;
@@ -160,32 +154,27 @@ void updateCurrentState() {
         buttonBPressed = false;
         currentState = PROG_SAISIE;
       }
-      
       if (digitalRead(BTN_B_PIN) == HIGH) {
         buttonBPressed = false;
       }
       break;
 
     case FERME:
-      changeColor(ROUGE);
+      if (!isFlashing) {
+        changeColor(ROUGE);
+      }
       
-      // Afficheur : code
       if (combinationTyper()) {
-        //function
-        //si bon code
-        // vert
-        //currentState = OUVERT;
-        //sinon 
-        // clignotements rouges
-        //currentState = FERME;
-        //
-
-        isValid = true;
-        buttonAPressed = false;
-        flashColor(VERT);
-        doorMoveMillis = millis();
-        add(OUVERTURE);//
-        currentState = OUVERT;
+        if (compareCodes()) {
+          isValid = true;
+          flashColor(VERT);
+          add(OUVERTURE);
+          doorMoveMillis = millis();
+          currentState = OUVERT;
+        }
+        else {
+          flashColor(ROUGE);
+        }
         resetCombinationTyper();
       }
       break;
@@ -194,7 +183,7 @@ void updateCurrentState() {
 
 void loop() {
   now = millis();
-  updateFlashColor();
-  //updateServo();
   updateCurrentState();
+  updateServo();
+  updateFlashColor();
 }

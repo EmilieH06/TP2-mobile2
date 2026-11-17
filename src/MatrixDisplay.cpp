@@ -12,6 +12,7 @@ const unsigned long intervalColor = 500;
 
 int flashStep = 0;
 bool isFlashing = false;
+bool isContinuousFlashing = false;
 Color colorFlash = VERT;
 
 void setupMatrixDisplay() {
@@ -44,13 +45,22 @@ void changeColor(Color color) {
   matrix.show();
 }
 
-void flashColor(Color color) {
-  if (!isFlashing) {
+void continuousFlash(Color color) {
+  if (!isContinuousFlashing || colorFlash != color) {
+    isContinuousFlashing = true;
     isFlashing = true;
     colorFlash = color;
     flashStep = 0;
     previousMillisColor = millis();
   }
+}
+
+void flashColor(Color color) {
+  isContinuousFlashing = false;
+  isFlashing = true;
+  colorFlash = color;
+  flashStep = 0;
+  previousMillisColor = millis();
 }
 
 void updateFlashColor() {
@@ -68,15 +78,22 @@ void updateFlashColor() {
           break;
         case 1:
         case 3:
-          changeColor(colorFlash);
-          break;
         case 5:
           changeColor(colorFlash);
-          isFlashing = false;
           break;
       }
-      matrix.show();
       flashStep++;
+
+      if (flashStep >= 6) {
+        if (isContinuousFlashing) {
+          flashStep = 0;
+        }
+        else {
+          isFlashing = false;
+          changeColor(colorFlash);
+        }
+      }
+      matrix.show();
     }
   }
 }
