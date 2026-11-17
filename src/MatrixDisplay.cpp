@@ -12,7 +12,7 @@ const unsigned long intervalColor = 500;
 
 int flashStep = 0;
 bool isFlashing = false;
-bool isValidFlash = false;
+Color colorFlash = VERT;
 
 void setupMatrixDisplay() {
   matrix.begin();
@@ -22,22 +22,32 @@ void setupMatrixDisplay() {
   matrix.show();
 }
 
-void changeColor(bool valid) {
-  if (valid) {
-    //https://github.com/adafruit/Adafruit_NeoMatrix/blob/master/Adafruit_NeoMatrix.h
-    matrix.fillScreen(matrix.Color(0, 255, 0));
-  }
-  else {
-    //https://github.com/adafruit/Adafruit_NeoMatrix/blob/master/Adafruit_NeoMatrix.h
-    matrix.fillScreen(matrix.Color(255, 0, 0));
+void changeColor(Color color) {
+  switch (color) {
+    case VERT:
+      //https://github.com/adafruit/Adafruit_NeoMatrix/blob/master/Adafruit_NeoMatrix.h
+      matrix.fillScreen(matrix.Color(0, 255, 0));
+      break;
+    case ORANGE:
+      //https://github.com/adafruit/Adafruit_NeoMatrix/blob/master/Adafruit_NeoMatrix.h
+      matrix.fillScreen(matrix.Color(255, 150, 0));
+      break;
+    case ROUGE:
+      //https://github.com/adafruit/Adafruit_NeoMatrix/blob/master/Adafruit_NeoMatrix.h
+      matrix.fillScreen(matrix.Color(255, 0, 0));
+      break;
+    case VIDE:
+      //https://github.com/adafruit/Adafruit_NeoMatrix/blob/master/Adafruit_NeoMatrix.h
+      matrix.fillScreen(matrix.Color(0, 0, 0));
+      break;
   }
   matrix.show();
 }
 
-void flashColor(bool valid) {
+void flashColor(Color color) {
   if (!isFlashing) {
     isFlashing = true;
-    isValidFlash = valid;
+    colorFlash = color;
     flashStep = 0;
     previousMillisColor = millis();
   }
@@ -52,51 +62,16 @@ void updateFlashColor() {
       
       switch (flashStep) {
         case 0:
-          //https://github.com/adafruit/Adafruit_NeoMatrix/blob/master/Adafruit_NeoMatrix.h
-          matrix.fillScreen(matrix.Color(0, 0, 0));
-          break;
-
-        case 1:
-          if (isValidFlash) {
-            //https://github.com/adafruit/Adafruit_NeoMatrix/blob/master/Adafruit_NeoMatrix.h
-            matrix.fillScreen(matrix.Color(0, 255, 0));
-          }
-          else {
-            //https://github.com/adafruit/Adafruit_NeoMatrix/blob/master/Adafruit_NeoMatrix.h
-            matrix.fillScreen(matrix.Color(255, 150, 0));
-          }
-          break;
-
         case 2:
-          //https://github.com/adafruit/Adafruit_NeoMatrix/blob/master/Adafruit_NeoMatrix.h
-          matrix.fillScreen(matrix.Color(0, 0, 0));
-          break;
-
-        case 3:
-          if (isValidFlash) {
-            //https://github.com/adafruit/Adafruit_NeoMatrix/blob/master/Adafruit_NeoMatrix.h
-            matrix.fillScreen(matrix.Color(0, 255, 0));
-          }
-          else {
-            //https://github.com/adafruit/Adafruit_NeoMatrix/blob/master/Adafruit_NeoMatrix.h
-            matrix.fillScreen(matrix.Color(255, 150, 0));
-          }
-          break;
-
         case 4:
-          //https://github.com/adafruit/Adafruit_NeoMatrix/blob/master/Adafruit_NeoMatrix.h
-          matrix.fillScreen(matrix.Color(0, 0, 0));
+          changeColor(VIDE);
           break;
-
+        case 1:
+        case 3:
+          changeColor(colorFlash);
+          break;
         case 5:
-          if (isValidFlash) {
-            //https://github.com/adafruit/Adafruit_NeoMatrix/blob/master/Adafruit_NeoMatrix.h
-            matrix.fillScreen(matrix.Color(0, 255, 0));
-          }
-          else {
-            //https://github.com/adafruit/Adafruit_NeoMatrix/blob/master/Adafruit_NeoMatrix.h
-            matrix.fillScreen(matrix.Color(255, 150, 0));
-          }
+          changeColor(colorFlash);
           isFlashing = false;
           break;
       }

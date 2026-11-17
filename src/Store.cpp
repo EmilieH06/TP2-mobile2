@@ -22,6 +22,12 @@ NTP ntp(wifiUdp);
 String path = "chambre/evenements";
 String vault = "chambre-2435295";
 
+String journalTypes[] = {
+  "OUVERTURE",
+  "FERMETURE",
+  "CHANGEMENT_CODE"
+};
+
 void connectDatabase() {
   config.api_key = API_KEY;
   config.token_status_callback = tokenStatusCallback;
@@ -41,8 +47,8 @@ void connectDatabase() {
   ntp.begin();
 }
 
-void add(String type) {
-  content.set("fields/type/stringValue", type);
+void add(Journal type) {
+  content.set("fields/type/stringValue", journalTypes[type]);
   content.set("fields/coffre/stringValue", vault);
 
   //https://github.com/sstaub/NTP

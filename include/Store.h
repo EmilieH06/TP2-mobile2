@@ -1,4 +1,4 @@
 #include <Arduino.h>
 
 void connectDatabase();
-void add(String type);
+void add(Journal type);

@@ -1,6 +1,8 @@
 #include <Arduino.h>
 #include "Configuration.h"
-#include "Display.h"
+#include <TM1637Display.h>
+
+TM1637Display display(CLK_PIN, DIO_PIN);
 
 int combinationStep = 0;
 
@@ -8,6 +10,12 @@ int combination[4] = {-1, -1, -1, -1};
 
 bool buttonACodePressed = true;
 bool buttonBCodePressed = true;
+
+void setupDisplay() {
+  display.setBrightness(0x0f);
+  // luminosité : 0x00 (faible) à 0x0f (maximum)
+  display.clear();
+}
 
 void updateCombinationDisplay() {
   if (combination[combinationStep] == -1) {

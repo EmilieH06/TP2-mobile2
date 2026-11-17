@@ -22,3 +22,16 @@ enum State {
   OUVERT,
   FERME
 };
+
+enum Color {
+  VERT,
+  ORANGE,
+  ROUGE,
+  VIDE
+};
+
+enum Journal {
+  OUVERTURE,
+  FERMETURE,
+  CHANGEMENT_CODE
+};

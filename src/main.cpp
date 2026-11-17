@@ -1,7 +1,6 @@
 #include <Arduino.h>
 #include "Configuration.h"
 #include "Secret.h"
-#include "Display.h"
 #include "Store.h"
 #include "CodeType.h"
 #include "DoorVault.h"
@@ -35,8 +34,8 @@ void connectWifi() {
 void setup() {
   Serial.begin(9600);
 
-  //connectWifi();//
-  //connectDatabase();//
+  connectWifi();//
+  connectDatabase();//
 
   pinMode(BTN_A_PIN, INPUT_PULLUP);
   pinMode(BTN_B_PIN, INPUT_PULLUP);
@@ -57,11 +56,7 @@ void updateServo() {
   }
 }
 
-void loop() {
-  now = millis();
-  updateFlashColor();
-  //updateServo();
-
+void updateCurrentState() {
   switch (currentState) {
     case NON_PROGRAMME:
       if (digitalRead(BTN_B_PIN) == LOW && !buttonBPressed) {
@@ -82,7 +77,7 @@ void loop() {
       break;
 
     case PROG_SAISIE:
-      flashColor(false); //orange
+      flashColor(ORANGE);
 
       if (combinationTyper()) {
         for (int i = 0; i < 4; i++) {
@@ -95,7 +90,7 @@ void loop() {
       break;
 
     case PROG_CONFIRMATION:
-      flashColor(false); //orange
+      flashColor(ORANGE);
 
       if (combinationTyper()) {
         bool isCorrectCode = true;
@@ -103,8 +98,6 @@ void loop() {
         for (int i = 0; i < 4; i++) {
           if (vaultCode[i] != combination[i]) {
             isCorrectCode = false;
-            // 3 clignotements rouges
-            flashColor(isCorrectCode); //rouge
             break;
           }
         }
@@ -112,11 +105,13 @@ void loop() {
           isValid = true;
           wrongCodeCounter = 0;
           // 3 clignotements verts
-          flashColor(isCorrectCode); //vert
-          //add("CHANGEMENT_CODE");// //journalstate
+          flashColor(VERT);
+          add(CHANGEMENT_CODE);//
           currentState = OUVERT;
         }
         else {
+          // 3 clignotements rouges
+          flashColor(ROUGE);
           wrongCodeCounter += 1;
           if (wrongCodeCounter >= 3) {
             wrongCodeCounter = 0;
@@ -129,7 +124,7 @@ void loop() {
       break;
 
     case OUVERT:
-      changeColor(true); //vert
+      changeColor(VERT);
 
       if (digitalRead(BTN_A_PIN) == LOW) {
         delay(50);
@@ -147,7 +142,7 @@ void loop() {
       
       if (digitalRead(BTN_A_PIN) == HIGH && buttonAPressed) {
         buttonAPressed = false;
-        //add("FERMETURE");// //journalstate
+        add(FERMETURE);//
         doorMoveMillis = millis();
         currentState = FERME;
       }
@@ -172,7 +167,7 @@ void loop() {
       break;
 
     case FERME:
-      changeColor(false); //rouge
+      changeColor(ROUGE);
       
       // Afficheur : code
       if (combinationTyper()) {
@@ -187,12 +182,19 @@ void loop() {
 
         isValid = true;
         buttonAPressed = false;
-        flashColor(isValid);
+        flashColor(VERT);
         doorMoveMillis = millis();
-        //add("OUVERTURE");// //journalstate
+        add(OUVERTURE);//
         currentState = OUVERT;
         resetCombinationTyper();
       }
       break;
   }
+}
+
+void loop() {
+  now = millis();
+  updateFlashColor();
+  //updateServo();
+  updateCurrentState();
 }
