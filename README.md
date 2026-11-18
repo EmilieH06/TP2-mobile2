@@ -2,7 +2,7 @@
 - https://github.com/EmilieH06/TP2-mobile2
 
 ## Lien vers la vidéo: 
-- https://cegepsaintefoy-my.sharepoint.com/:v:/g/personal/2435295_csfoy_ca/IQAeJTp14FNuSakzKhi25fTTAUJLZx1pNzXv7niqdZKqQ5c?e=N4nOos
+- https://cegepsaintefoy-my.sharepoint.com/:v:/g/personal/2435295_csfoy_ca/IQAeJTp14FNuSakzKhi25fTTAUJLZx1pNzXv7niqdZKqQ5c
 
 ## Branchements:
 Bouton A (Bleu):
