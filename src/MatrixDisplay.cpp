@@ -15,6 +15,7 @@ bool isFlashing = false;
 bool isContinuousFlashing = false;
 Color colorFlash = VERT;
 
+//Setup de la matrice lors du démarrage
 void setupMatrixDisplay() {
   matrix.begin();
   matrix.setTextWrap(false);
@@ -23,6 +24,7 @@ void setupMatrixDisplay() {
   matrix.show();
 }
 
+//Changer la couleur de la matrice
 void changeColor(Color color) {
   switch (color) {
     case VERT:
@@ -39,12 +41,14 @@ void changeColor(Color color) {
       break;
     case VIDE:
       //https://github.com/adafruit/Adafruit_NeoMatrix/blob/master/Adafruit_NeoMatrix.h
+      //Pour ne pas allumer la matrice
       matrix.fillScreen(matrix.Color(0, 0, 0));
       break;
   }
   matrix.show();
 }
 
+//Pour que la matrice flash d'une couleur de manière continue
 void continuousFlash(Color color) {
   if (!isContinuousFlashing || colorFlash != color) {
     isContinuousFlashing = true;
@@ -55,6 +59,7 @@ void continuousFlash(Color color) {
   }
 }
 
+//Pour que la matrice flash d'une couleur une seule fois
 void flashColor(Color color) {
   isContinuousFlashing = false;
   isFlashing = true;
@@ -63,6 +68,7 @@ void flashColor(Color color) {
   previousMillisColor = millis();
 }
 
+//Updater la couleur de la matrice
 void updateFlashColor() {
   if (isFlashing) {
     unsigned long currentMillisColor = millis();
@@ -70,6 +76,7 @@ void updateFlashColor() {
     if (currentMillisColor - previousMillisColor >= intervalColor) {
       previousMillisColor = currentMillisColor;
       
+      //Pour le clignottement
       switch (flashStep) {
         case 0:
         case 2:
@@ -84,6 +91,7 @@ void updateFlashColor() {
       }
       flashStep++;
 
+      //Pour savoir quel événement faire selon si le flash est continue ou non
       if (flashStep >= 6) {
         if (isContinuousFlashing) {
           flashStep = 0;

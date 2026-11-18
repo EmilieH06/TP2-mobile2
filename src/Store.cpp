@@ -28,6 +28,7 @@ String journalTypes[] = {
   "CHANGEMENT_CODE"
 };
 
+//Connection de la base de données lors du démarrage
 void connectDatabase() {
   config.api_key = API_KEY;
   config.token_status_callback = tokenStatusCallback;
@@ -47,14 +48,19 @@ void connectDatabase() {
   ntp.begin();
 }
 
+//Ajout des données dans la base de données
 void add(Journal type) {
+  //Ajoute le type
   content.set("fields/type/stringValue", journalTypes[type]);
+  //Ajoute le nom du coffre
   content.set("fields/coffre/stringValue", vault);
 
   //https://github.com/sstaub/NTP
+  //Ajoute la date et l'heure
   ntp.update();
   content.set("fields/horodatage/timestampValue", ntp.formattedTime("%Y-%m-%dT%H:%M:%SZ"));
 
+  //Envoye les données dans la base de données
   if (Firebase.Firestore.createDocument(&fbdo, PROJECT_ID, "", path + ntp.formattedTime("%Y-%m-%dT%H:%M:%SZ"), content.raw())) {
     Serial.println("Données envoyées");
   }
